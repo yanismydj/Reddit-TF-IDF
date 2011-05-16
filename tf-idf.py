@@ -2,32 +2,34 @@
 
 # Libraries needed to do cool stuffs.
 import feedparser
+import math
 
 class tfidf(object):
-	links1 = []
-	links2 = []
+	links = []
+	terms = []
 	
-	def __init__(self, url1, url2):
-		self.url1 = url1
-		self.url2 = url2
+	def __init__(self, url):
+		self.url = url
 		
-		self.parsed1 = feedparser.parse(self.url1)
-		self.parsed2 = feedparser.parse(self.url1)
-
+		self.parsed = feedparser.parse(self.url)
+		
+		# Go through the first 25 Links on given reddit page
 		for x in range(1, 25):
-			self.links1.append(self.parsed1.entries[x].title)
-   			self.links2.append(self.parsed2.entries[x].title)    
-
-    def linkcompare(self):
-        print self.links
-
+			self.links.append(self.parsed.entries[x].title)
+	
+	def convert_links_to_terms(self):
+		for link in self.links:
+			self.terms.append(link.split(' '))
+	
+	def term_count(self):
+		self.tf = count(terms)
 		
 
 	
-proggit = tfidf("http://www.reddit.com/r/programming.rss", "http://www.reddit.com/r/netsec.rss")
-print proggit.links1
-print proggit.links2
-proggit.linkcompare()
+proggit = tfidf("http://www.reddit.com/r/programming.rss")
+print proggit.links
+proggit.convert_links_to_terms()
+print proggit.terms
 
 
 #page2 = feedparser.parse("http://www.reddit.com/r/netsec.rss")
