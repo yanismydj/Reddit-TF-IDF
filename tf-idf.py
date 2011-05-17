@@ -5,13 +5,16 @@ import feedparser
 import math
 import operator
 
-# List of subreddits for our sample
-subreddits = ['atheism', 'soccer', 'atheism', 'LosAngeles', 'pics', 'funny', 'politics', 'gaming']
-
-# This is the list we'll use to store ALL the terms from Every subreddit
 all_terms = {}
 
-# Holds subreddit attributes/methods
+# List of subreddits for our sample
+subreddits = ['atheism', 'soccer', 'atheism', 'LosAngeles', 'pics', 'funny', 'politics', 'gaming',
+'worldnews', 'askreddit', 'videos', 'iama', 'todayilearned', 'AdviceAnimals', 'starcraft', 'WTF', 
+'fffffffuuuuuuuuuuuu']
+
+
+
+# Holds subreddit attributes/methods.  Subreddit is interchangable with document for this assignment
 class SubRedditObj(object):
 	
 	def __init__(self, subreddit):
@@ -94,34 +97,75 @@ class SubRedditObj(object):
 			return self.terms.index(term_input)
 		except:
 			return False
-			
-			
-def calc_tfidf(term, subreddit_parent, document_objs):
-	term_appears = 0
-	for subreddit in all_terms:
-		if document_objs[subreddit].contains_the_term(term):
-			term_appears += 1
+
+
+
+# This class helps calculate the tfidf scores once we've laid all the ground work.  It also allows
+# us to represent our tfidf weights in interesting ways
+class TfidfScores(object):
 	
-	idf = math.log(len(document_objs) / term_appears)
-	tfidf = idf * document_objs[subreddit_parent].term_freq[term]
+	def __init__(self, subreddits):
+		self.subreddits = subreddits
+		self.reddit_list = {}
+		self.top_terms_global = []
+		self.scores = []
+		
+		# populate reddit_list
+		self.reddit_list = self.get_subreddit_objects(self.subreddits)
+		
+		self.scores = self.build_tfidf_scores()
 	
-	return tfidf
+	
+	# Method to build the reddit_list of objects for our given list of subreddits
+	def get_subreddit_objects(self, subreddits):
+		reddit_list = {}
+		for subreddit in subreddits:
+			reddit_list[subreddit] = SubRedditObj(subreddit)
+			
+		return reddit_list
+	
+	
+	# This function will build the top tfidf scores for each subreddit
+	def build_tfidf_scores(self):
+		scores = []
+		
+		for subreddit in self.subreddits:
+			
+			for term in self.reddit_list[subreddit].top_items_sorted:
+			
+				term_score = [term, subreddit, self._calc_tfidf(term[0], subreddit)]
+				scores.append(term_score)
+				
+		return scores
+	
 
-reddit_list = {}
-top_terms_global = []
-term_scores = {}
+	# the heavy lifting to calculate a tfidf score
+	def _calc_tfidf(self, term, subreddit_parent):
+		term_appears = 0
+		for subreddit in all_terms:
+			if self.reddit_list[subreddit].contains_the_term(term):
+				term_appears += 1
+		
+		if term_appears > 0:
+			idf = math.log(len(self.reddit_list) / term_appears)
+			tfidf = idf * self.reddit_list[subreddit_parent].term_freq[term]
+		else:
+			tfidf = 0
+		
+		return tfidf
 
-for subreddit in subreddits:
-	reddit_list[subreddit] = SubRedditObj(subreddit)
 
-for subreddit in subreddits:
-	for term in reddit_list[subreddit].top_items_sorted:
-		tfidf_score = calc_tfidf(term[0], subreddit, reddit_list)
-		term_scores[term[0]] = tfidf_score
+	def top_subreddit_terms(self, subreddit)
+		
 
-term_scores_sorted = sorted(term_scores.iteritems(), key=operator.itemgetter(1))
+tfidfs = TfidfScores(subreddits)
 
-for scored_term in term_scores_sorted:
-	print scored_term[0], ' has a score of ', "%.6f" % scored_term[1]
+#print tfidfs.scores
+
+
+
+
+
+
 
  
