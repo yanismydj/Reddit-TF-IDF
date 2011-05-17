@@ -154,18 +154,12 @@ class TfidfScores(object):
 		return tfidf
 
 
-	def what_do_they_like(self, subreddit)
+	def what_do_they_like(self):
 		rand = choice(self.scores)
-		return "People from %s probably like %s (score of %d)" % (rand[1], rand[0], rand[2])
+		return "People from %s probably like %s (tf-idf weight of %.9f)" % (rand[1], rand[0][0], rand[2])
+
 
 tfidfs = TfidfScores(subreddits)
 
 print tfidfs.what_do_they_like()
 
-
-
-
-
-
-
- 
