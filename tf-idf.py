@@ -145,6 +145,7 @@ class TfidfScores(object):
 			if self.reddit_list[subreddit].contains_the_term(term):
 				term_appears += 1
 		
+		# if the term appears anywhere, do the calculation.  Don't divide by zero!!
 		if term_appears > 0:
 			idf = math.log(len(self.reddit_list) / term_appears)
 			tfidf = idf * self.reddit_list[subreddit_parent].term_freq[term]
@@ -153,13 +154,27 @@ class TfidfScores(object):
 		
 		return tfidf
 
-
+	
+	# This method will output a random generalization about a redditor of a random subreddit.
+	# Note: we should probably say 'are probably interested in' instead of like, but the quips this
+	# thing pumps out are funnier this way
 	def what_do_they_like(self):
 		rand = choice(self.scores)
-		return "People from %s probably like %s (tf-idf weight of %.9f)" % (rand[1], rand[0][0], rand[2])
+		return "People from %s probably like %s ..in their pants (tf-idf weight of %.9f)" % (rand[1], rand[0][0], rand[2])
 
 
 tfidfs = TfidfScores(subreddits)
 
-print tfidfs.what_do_they_like()
+# make a whole bunch of generalizations
+i = 0
+while i < 25:
+	print tfidfs.what_do_they_like()
+	i += 1
 
+
+
+# Highlights of this cleaver bastard:
+#music ~/Python/reddit_tf-idf: ./tf-idf.py 
+#People from soccer probably like barcelona (tf-idf weight of 0.012517331)
+#music ~/Python/reddit_tf-idf: ./tf-idf.py 
+#People from soccer probably like goal (tf-idf weight of 0.009387998)

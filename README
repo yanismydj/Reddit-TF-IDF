@@ -1,5 +1,47 @@
 Reddit Tf-idf for Gravity
 By Yan
 
+This script parses a subset of reddit 'subreddits'(listed below) and makes generalizations about what users of a subreddit might like, by using a TF-IDF score.
+Outputs 25 random tidbits each time it is run.  Some gems are:
+People from soccer probably like barcelona (tf-idf weight of 0.012517331)
+People from soccer probably like goal (tf-idf weight of 0.009387998)
+People from politics probably like legal (tf-idf weight of 0.003239006)
+People from LosAngeles probably like ticket (tf-idf weight of 0.006754175)
+People from politics probably like states (tf-idf weight of 0.001619503)
+People from AdviceAnimals probably like chicken (tf-idf weight of 0.033204655)
+People from gaming probably like steam (tf-idf weight of 0.015843364)
+People from soccer probably like spending (tf-idf weight of 0.012517331)
+People from starcraft probably like protoss (tf-idf weight of 0.020537694)
+People from worldnews probably like troops (tf-idf weight of 0.002802010)
 
-Requires BeautifulSoup module, included in dependencies folder for convenience
+V 2.0 gems:
+People from worldnews probably like troops (tf-idf weight of 0.002802010)
+People from askreddit probably like go in their pants (tf-idf weight of 0.001647095)
+People from politics probably like bill in their pants (tf-idf weight of 0.003099019)
+People from iama probably like programmers in their pants (tf-idf weight of 0.003916086)
+People from worldnews probably like cigarette in their pants (tf-idf weight of 0.002802010)
+
+
+The sample size is sort of small so it's not very accurate and gets lots of false positives, but by adding more subreddits or using more information
+from each subreddit we would weed out more of the junk words("why", "if", "and", etc.)
+ 
+higher Tf-idf weights correspond with high relevance.
+
+Current Tracked Subreddits:
+atheism
+soccer
+atheism
+LosAngeles
+pics
+funny
+politics
+gaming',
+'worldnews
+askreddit
+videos
+iama
+todayilearned
+AdviceAnimals
+starcraft
+WTF 
+fffffffuuuuuuuuuuuu   
