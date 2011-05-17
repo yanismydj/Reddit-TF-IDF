@@ -4,6 +4,7 @@
 import feedparser
 import math
 import operator
+from random import choice
 
 all_terms = {}
 
@@ -110,9 +111,10 @@ class TfidfScores(object):
 		self.top_terms_global = []
 		self.scores = []
 		
-		# populate reddit_list
+		# populate reddit_list( list of subreddit objects)
 		self.reddit_list = self.get_subreddit_objects(self.subreddits)
 		
+		# populate scores
 		self.scores = self.build_tfidf_scores()
 	
 	
@@ -128,14 +130,11 @@ class TfidfScores(object):
 	# This function will build the top tfidf scores for each subreddit
 	def build_tfidf_scores(self):
 		scores = []
-		
 		for subreddit in self.subreddits:
-			
 			for term in self.reddit_list[subreddit].top_items_sorted:
-			
-				term_score = [term, subreddit, self._calc_tfidf(term[0], subreddit)]
-				scores.append(term_score)
-				
+				if (self._calc_tfidf(term[0], subreddit) > 0):
+					term_score = [term, subreddit, self._calc_tfidf(term[0], subreddit)]
+					scores.append(term_score)
 		return scores
 	
 
@@ -155,12 +154,13 @@ class TfidfScores(object):
 		return tfidf
 
 
-	def top_subreddit_terms(self, subreddit)
-		
+	def what_do_they_like(self, subreddit)
+		rand = choice(self.scores)
+		return "People from %s probably like %s (score of %d)" % (rand[1], rand[0], rand[2])
 
 tfidfs = TfidfScores(subreddits)
 
-#print tfidfs.scores
+print tfidfs.what_do_they_like()
 
 
 
