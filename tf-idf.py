@@ -160,7 +160,7 @@ class TfidfScores(object):
 	# thing pumps out are funnier this way
 	def what_do_they_like(self):
 		rand = choice(self.scores)
-		return "People from \033[1m %s \033[0;0m probably like \033[1m %s \033[0;0m ..in their pants (tf-idf weight of %.9f)" % (rand[1], rand[0][0], rand[2])
+		return "People from \033[1m%s\033[0;0m probably like \033[1m%s\033[0;0m..in their pants (tf-idf weight of %.9f)" % (rand[1], rand[0][0], rand[2])
 
 
 tfidfs = TfidfScores(subreddits)
