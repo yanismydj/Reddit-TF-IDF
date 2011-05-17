@@ -12,7 +12,7 @@ subreddits = ['atheism', 'soccer', 'atheism', 'LosAngeles', 'pics', 'funny', 'po
 all_terms = {}
 
 # Holds subreddit attributes/methods
-class TFIDF(object):
+class SubRedditObj(object):
 	
 	def __init__(self, subreddit):
 		self.subreddit = subreddit
@@ -33,7 +33,7 @@ class TFIDF(object):
 		
 		# We populate the term frequency for the links of this subreddit here
 		self._term_count()
-		self._calc_tf()
+		self.calc_tf()
 		
 		# Calculate the top terms
 		self._top_terms()
@@ -49,7 +49,7 @@ class TFIDF(object):
 		self.terms = []
 		for link in self.links:
 			for term in link.split(' '):
-				self.terms.append(term)
+				self.terms.append(term.lower())
 	
 	
 	# This method will count up the number of times a term appears and populate the term_freq dict
@@ -65,7 +65,7 @@ class TFIDF(object):
 	
 	
 	# calculate the term weight
-	def _calc_tf(self):
+	def calc_tf(self):
 		self.term_freq = {}
 
 		# We do the calculations to find the term frequency for each term here.
@@ -77,6 +77,7 @@ class TFIDF(object):
 	def _top_terms(self):
 		self.top_items = {}
 		
+		# For this assignment, we'll limit the top terms to terms who appear more than once
 		for term in self.term_amount:
 			if self.term_amount[term] > 1:
 				self.top_items[term] = self.term_amount[term]
@@ -84,15 +85,6 @@ class TFIDF(object):
 		# Sorted tuples
 		self.top_items_sorted = sorted(self.top_items.iteritems(), key=operator.itemgetter(1))
 		self.top_items_sorted.reverse()
-	
-	
-	# Calculate the inverse document frequency
-	def calc_idf(self, subreddit_obj):
-		# Here we are going to do the math to find the weight of terms by comparing another subreddit
-		# object
-		for term in self.terms:
-			if (subreddit_obj.contains_the_term(term)):	
-				idf = math.log(2)
 	
 	
 	# Find out if this document contains a given term
@@ -104,33 +96,32 @@ class TFIDF(object):
 			return False
 			
 			
+def calc_tfidf(term, subreddit_parent, document_objs):
+	term_appears = 0
+	for subreddit in all_terms:
+		if document_objs[subreddit].contains_the_term(term):
+			term_appears += 1
+	
+	idf = math.log(len(document_objs) / term_appears)
+	tfidf = idf * document_objs[subreddit_parent].term_freq[term]
+	
+	return tfidf
 
-reddit = {}
+reddit_list = {}
+top_terms_global = []
+term_scores = {}
+
 for subreddit in subreddits:
-	reddit[subreddit] = TFIDF(subreddit)
+	reddit_list[subreddit] = SubRedditObj(subreddit)
 
-for subreddit in all_terms:
-	print subreddit
-	print [subreddit].top_items_sorted
+for subreddit in subreddits:
+	for term in reddit_list[subreddit].top_items_sorted:
+		tfidf_score = calc_tfidf(term[0], subreddit, reddit_list)
+		term_scores[term[0]] = tfidf_score
 
+term_scores_sorted = sorted(term_scores.iteritems(), key=operator.itemgetter(1))
 
-#proggit = TFIDF("programming")
-#netsec = TFIDF("netsec")
+for scored_term in term_scores_sorted:
+	print scored_term[0], ' has a score of ', "%.6f" % scored_term[1]
 
-#print proggit.top_items_sorted
-#print netsec.top_items
-#print proggit.contains_the_term("Asynchronous")
-
-#print proggit.terms.index()
-#	print 'true'
-#else:
-#	print 'false'
-#for term in proggit.term_freq:
-#	print term, ', ', proggit.term_freq[term]
-#for term in proggit.term_freq
-#	print term
-
-
-#page2 = feedparser.parse("http://www.reddit.com/r/netsec.rss")
-#for link in page2['entries']:
-#	print link['title']    
+ 
