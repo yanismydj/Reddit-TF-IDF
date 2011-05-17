@@ -3,7 +3,7 @@
 # Libraries needed to do cool stuffs.
 import feedparser
 import math
-from operator import itemgetter
+import operator
 
 # List of subreddits for our sample
 subreddits = ['atheism', 'soccer', 'atheism', 'LosAngeles', 'pics', 'funny', 'politics', 'gaming']
@@ -21,8 +21,9 @@ class TFIDF(object):
 		self.term_idfs = {}
 		self.total_terms = 0
 		
-		# Use feedparser to parse the content from the reddit rss feed
-		self.parsed = feedparser.parse(self.url)
+		# Call Getter method to pull up the objects data
+		self._getter()
+		
 		
 		# Go through the first 25 Links on given reddit page
 		self.links = []
@@ -35,7 +36,12 @@ class TFIDF(object):
 		self._calc_tf()
 		
 		# Calculate the top terms
-		self.top_terms()
+		self._top_terms()
+	
+	# breaking this into its own method, in case we wish to save to file or such.
+	def _getter(self):
+		# Use feedparser to parse the content from the reddit rss feed
+		self.parsed = feedparser.parse(self.url)
 	
 	
 	# Take our links and break them up into individual terms
@@ -44,7 +50,6 @@ class TFIDF(object):
 		for link in self.links:
 			for term in link.split(' '):
 				self.terms.append(term)
-				all_terms.append(term)
 	
 	
 	# This method will count up the number of times a term appears and populate the term_freq dict
@@ -57,11 +62,6 @@ class TFIDF(object):
 		for term in self.terms:
 			self.term_amount[term] = self.terms.count(term)
 			self.total_terms = self.total_terms + self.terms.count(term)
-			
-			# Now add this to our all_terms dict, but only if they appear more than once
-#			if self.terms.count(term) > 1:
-#				print term, ' => ', self.terms.count(term)
-#				all_terms[self.subreddit][term] = self.terms.count(term)
 	
 	
 	# calculate the term weight
@@ -71,6 +71,19 @@ class TFIDF(object):
 		# We do the calculations to find the term frequency for each term here.
 		for term in self.term_amount:
 			self.term_freq[term] = float(self.term_amount[term])/float(self.total_terms)
+
+	
+	# this is a function to display the top terms for this reddit, sorted by appearance
+	def _top_terms(self):
+		self.top_items = {}
+		
+		for term in self.term_amount:
+			if self.term_amount[term] > 1:
+				self.top_items[term] = self.term_amount[term]
+				
+		# Sorted tuples
+		self.top_items_sorted = sorted(self.top_items.iteritems(), key=operator.itemgetter(1))
+		self.top_items_sorted.reverse()
 	
 	
 	# Calculate the inverse document frequency
@@ -89,15 +102,8 @@ class TFIDF(object):
 			return self.terms.index(term_input)
 		except:
 			return False
-	
-	# this is a function to display the top terms for this reddit, sorted by appearance
-	def top_terms(self):
-		self.top_items = []
-		
-		for term in self.term_amount:
-			if self.term_amount[term] > 1:
-				self.top_items[term] = self.term_amount[term]
-
+			
+			
 
 reddit = {}
 for subreddit in subreddits:
@@ -105,11 +111,14 @@ for subreddit in subreddits:
 
 for subreddit in all_terms:
 	print subreddit
-	print subreddit.top_items
+	print [subreddit].top_items_sorted
 
 
-#proggit = TFIDF("http://www.reddit.com/r/programming.rss")
+#proggit = TFIDF("programming")
+#netsec = TFIDF("netsec")
 
+#print proggit.top_items_sorted
+#print netsec.top_items
 #print proggit.contains_the_term("Asynchronous")
 
 #print proggit.terms.index()
