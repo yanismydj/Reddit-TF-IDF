@@ -9,6 +9,7 @@ from operator import itemgetter
 class TFIDF(object):
 	links = []
 	terms = []
+	term_amount = {}
 	term_freq = {}
 	total_terms = 0
 	
@@ -24,6 +25,7 @@ class TFIDF(object):
 		
 		# We populate the term frequency for the links of this subreddit here
 		self.term_count()
+		self.calc_tf()
 	
 	# Take our links and break them up into individual terms
 	def convert_links_to_terms(self):
@@ -38,19 +40,20 @@ class TFIDF(object):
 		# Iterate through the terms we've collected for this subreddit, if their frequency is more
 		# than twice, add them to the term frequency list, otherwise ignore them,
 		for term in self.terms:
-		#	if self.terms.count(term) > 1:
-			self.term_freq[term] = self.terms.count(term)
+			self.term_amount[term] = self.terms.count(term)
 			self.total_terms = self.total_terms + self.terms.count(term)
 			
 	# calculate the term weight
 	def calc_tf(self):
-		print 'wewt'
-
+		# We do the calculations to find the term frequency for each term here.
+		for term in self.term_amount:
+			self.term_freq[term] = float(self.term_amount[term])/float(self.total_terms)
 
 
 
 proggit = TFIDF("http://www.reddit.com/r/programming.rss")
-print proggit.term_freq
+#for term in proggit.term_freq:
+	#print term, ', ', proggit.term_freq[term]
 #for term in proggit.term_freq
 #	print term
 
